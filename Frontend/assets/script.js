@@ -77,7 +77,6 @@ function filterSelected(e){
         e.target.classList.toggle('filter-selected');
     } else {
         e.target.classList.toggle('filter-selected');
-        getContent(e);
     }
 }
 
@@ -86,10 +85,12 @@ button.forEach(item => {
         e.stopPropagation();
         filterSelected(e);
         let results = works.filter(element => element.category.name === e.target.innerText);
-        if (e.target.classList.contains('filter-selected')){
-            results.forEach(element => element.style.display =  "initial");
-        } else if (!e.target.classList.contains('filter-selected')){
-            results.forEach(element => element.style.display = "none");
+        for (const element of results) {
+            if (e.target.classList.contains('filter-selected')){
+                element.style.display = 'initial';
+            } else if (!e.target.classList.contains('filter-selected')){
+                element.style.display = 'none';
+            }
         }
     })
 })
