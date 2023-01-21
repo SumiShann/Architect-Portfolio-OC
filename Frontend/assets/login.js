@@ -31,9 +31,14 @@ async function getUserData(){
 }
 
 async function loggingIn(){
-    await getUserData();
-    if (token != null){
-        window.location.href = "./index.html";
+    try{
+        await getUserData();
+        if (token != null){
+            window.location.href = "./index.html";
+        }
+    } catch (err){
+        console.log(err);
+        error.textContent = "Une erreur est survenue";
     }
 }
 

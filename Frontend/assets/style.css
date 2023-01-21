@@ -63,6 +63,12 @@ body {
 	align-items: center;
 }
 
+#edition svg{
+	width: 16px;
+	height: 16px;
+	margin: 5px;
+}
+
 #edition p{
 	font-size: 16px;
 	margin: 5px;
@@ -109,6 +115,7 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+
 nav ul {
 	display: flex;
 	align-items: center;
@@ -127,6 +134,73 @@ a {
 	text-decoration: none;
 	color:rgba(0, 0, 0);
 }
+
+a svg {
+	pointer-events: none;
+}
+
+.modify {
+	display: flex;
+	font-family: 'Work sans';
+	font-size: 14px;
+	font-weight: 400;
+	color: black;
+	width: 80px;
+	justify-content: space-between;
+}
+
+.modify svg{
+	width: 15px;
+	height: 15px;
+}
+
+.modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal-wrapper{
+	width: 630px;
+	max-width: calc(100vw - 20px);
+	height: calc(100vh - 100px);
+	border-radius: 10px;
+	background-color: white;
+	padding: 30px;
+	padding-bottom: 50px;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.modal-wrapper button{
+	border: none;
+	background-color: white;
+	align-self: flex-end;
+}
+
+.modal-wrapper button svg, #return-arrow svg{
+	width: 19px;
+	height: 19px;
+}
+
+.modal-wrapper section{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 20px 75px 0px 75px;
+}
+.modal-wrapper h3{
+	font-family: 'Work sans';
+	font-size: 26px;
+}
+
 #introduction {
 	display: flex;
 	align-items: center;
@@ -152,12 +226,179 @@ a {
 }
 #portfolio h2 {
 	text-align: center;
-	margin-bottom: 1em;
 }
+
+#portfolio .modify{
+	position: relative;
+	bottom: 21px;
+	left: 700px;
+}
+
+#portfolio .line-break{
+	width: 100%;
+	height: 1px;
+	background-color: #B3B3B3;
+	margin-top: 30px;
+}
+
+#portfolio #edit-gallery img{
+	width: 100%;
+}
+
+#portfolio .modal-wrapper #edit-gallery{
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-column-gap: 10px;
+	padding: 50px 0px 20px 0px;
+}
+
+#edit-gallery .trashcan{
+	width: 10px;
+	height: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: black;
+	padding: 3px;
+	border-radius: 2px;
+	position: relative;
+	bottom: 125px;
+	left: 65px;
+}
+
+#edit-gallery svg{
+	width: 9px;
+	height: 9px;
+}
+
+#portfolio .modal-wrapper .add-photo{
+	width: 60%;
+	height: 36px;
+	font-family: 'Syne';
+	font-size: 14px;
+	font-weight: 700;
+	color: white;
+	background-color: #1D6154;
+	border-radius: 60px;
+	margin: 40px 0px 30px 0px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#portfolio #modal-gallery p{
+	color: #D65353;
+	font-family: 'Work sans';
+}
+
+#porfolio #modal-delete {
+	z-index: 10;
+}
+
+#modal-delete .modal-wrapper{
+	width: 400px;
+	max-height: 150px;
+	padding: 30px;
+}
+
+#modal-delete section{
+	height: 100%;
+	margin: 20px 20px;
+	justify-content: space-between;
+}
+
+#modal-delete #button-delete {
+	align-self: inherit;
+	font-family: 'Syne';
+	color: #D65353;
+	cursor: pointer;
+}
+
+#modal-delete #button-delete:hover{
+	color: red;
+}
+
+#modal-add .modal-wrapper div{
+	display: flex;
+	justify-content: space-between;
+}
+
+#add-form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;
+}
+
+#modal-add #add-form .container-photo {
+	background-color: #E8F1F6;
+	height: 169px;
+	flex-direction: column;
+	align-items: center;
+	padding: 30px;
+	margin: 30px 0px;
+	justify-content: space-around;
+	position: relative;
+}
+
+#add-form img{
+	position: absolute;
+	height: 100%;
+}
+
+#add-form svg{
+	height: 70px;
+}
+
+#add-form input[type="file"]{
+	position: absolute;
+	top: -1000px;
+	left: -1000px;
+}
+
+#add-form label[for="image"]{
+	background-color: #CBD6DC;
+	color: #306685;
+	height: 36px;
+	width: 173px;
+	border-radius: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#add-form input[type="text"], select{
+	height: 51px;
+	box-shadow: 0px 4px 14px #00000017;
+	margin: 10px 0px 30px 0px;
+	border: 1px;
+	padding: 0px 10px;
+	font-family: 'Work sans';
+}
+
+#add-form option{
+	font-family: 'Work sans';
+}
+
+#valid{
+	width: 60%;
+	height: 36px;
+	font-size: 14px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: none;
+}
+
+#valid:disabled{
+	background-color: #A7A7A7;
+}
+
 .selector {
 	display: flex;
 	justify-content: center;
-	margin-bottom: 40px;
+	margin: 10px 0px 35px 0px;
 }
 .selector button {
 	font-family: 'Syne';
@@ -168,8 +409,6 @@ a {
 	background-color: white;
 	margin: 10px 5px;
 	padding: 5px 10px;
-	position: relative;
-	z-index: 10;
 }
 .selector .filter-selected{
 	background-color: #1D6154;
