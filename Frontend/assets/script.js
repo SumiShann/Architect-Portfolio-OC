@@ -33,18 +33,62 @@ let modal2;
 let closeButton;
 let h3;
 
-let deleteButton;
-let workID;
-
+//Variables des liens ouvrant d'autres modales dans modalGallery
 let addPhoto;
 let deleteGallery;
 
+//Variables des éléments dans deleteModal
+let deleteButton;
+let workID;
+
+//Variables des éléments dans addModal
+let returnArrow;
 let addForm;
 let projPrev;
 let inputPhoto;
 let inputTitle;
 let selectCategory;
+let invalidMessage;
 let validate;
+
+//Variable avec les attributs du formulaire addForm
+const addFormAttr = {
+    enctype: 'multipart/form-data',
+    name: 'add-form',
+    id: 'add-form'
+};
+
+//Variable avec les attributs de inputPhoto
+const inputPhotoAttr = {
+    type: 'file',
+    name: 'image',
+    id: 'image',
+    accept: '.jpg, .png',
+    required: ''
+};
+
+//Variable avec les attributs de inputTitle
+const inputTitleAttr = {
+    type: 'text',
+    name: 'title',
+    id: 'title',
+    required: ''
+};
+
+//Variable avec les attributs de selectCategory
+const selectCategoryAttr = {
+    name: 'category',
+    id: 'category',
+    required: ''
+};
+
+//Variable avec les attributs du bouton validate
+const validateAttr = {
+    type: 'submit',
+    value: 'Valider',
+    id: 'valid',
+    disabled: 'true'
+};
 
 //Variable pour stocker le token d'authentification
 let token;
@@ -70,7 +114,7 @@ function createWorkElt(element){
     createFigure();
     gallery.appendChild(work);
     caption.innerText = element.title;
-    work.dataset.category = element.category.name;
+    work.dataset.category = element.category.id;
     work.dataset.id = element.id;
     image.setAttribute('src', element.imageUrl);
 }
@@ -153,46 +197,13 @@ async function deleteWork(e){
             console.log(res);
             document.querySelectorAll('figure[data-id="'+ workID +'"]').forEach(element => element.remove());
             closeModal2(e);
+        } else if (res.status === 401){
+            alert("Votre session a expiré");
         }
     } catch (err){
         console.log(err);
     }
 }
-
-const addFormAttr = {
-    enctype: 'multipart/form-data',
-    name: 'add-form',
-    id: 'add-form'
-};
-
-//Variable avec les attributs de inputPhoto
-const inputPhotoAttr = {
-    type: 'file',
-    name: 'image',
-    id: 'image',
-    accept: '.jpg, .png',
-    required: ''
-};
-
-const inputTitleAttr = {
-    type: 'text',
-    name: 'title',
-    id: 'title',
-    required: ''
-};
-
-const selectCategoryAttr = {
-    name: 'category',
-    id: 'category',
-    required: ''
-};
-
-const validateAttr = {
-    type: 'submit',
-    value: 'Valider',
-    id: 'valid',
-    disabled: 'true'
-};
 
 //Fonction pour appliquer plusieurs attributs à un seul élément d'un coup
 function setMultipleAttr(elt, eltAttr){
@@ -219,6 +230,7 @@ function revokePreview(){
     projPrev.removeAttribute('src');
 }
 
+//Fonction pour créer des options de catégorie dans le formulaire d'ajout de projet. Se déclenche dans getCategory()
 function createOption(element){
     let option = document.createElement('option');
     selectCategory.add(option);
@@ -226,18 +238,38 @@ function createOption(element){
     option.innerText = element.name;
 }
 
+//Fonction pour vérifier la validité des champs du formulaire
 function enableSubmit(){
     if (inputPhoto.checkValidity() && inputTitle.checkValidity() && selectCategory.checkValidity()){
         console.log('enabling works');
         validate.removeAttribute('disabled');
+        invalidMessage.innerText = "";
     } else {
         console.log('doesnt work');
         if (!validate.hasAttribute('disabled')){
             validate.setAttribute('disabled', 'true');
+            invalidMessage.innerText = "Veuillez remplir tous les champs du formulaire";
         }
     }
 }
 
+//Fonction pur ajouter dynamiquement le nouveau projet
+async function getLastWork(){
+    try{
+        const response = await fetch("http://localhost:5678/api/works/");
+        if (response.ok){
+            works = await response.json();
+            console.log(works[works.length - 1]);
+            createWorkElt(works[works.length - 1]);
+            figures = document.querySelectorAll('#portfolio figure');
+            createModalPhoto(works[works.length - 1]);
+        }
+    } catch (error){
+        console.log(error);
+    }
+}
+
+//Fonction pour faire une requête d'ajout de projet dans la galerie
 async function sendPostResquest(){
     try {
         const res = await fetch('http://localhost:5678/api/works', {
@@ -249,28 +281,35 @@ async function sendPostResquest(){
             body: new FormData(addForm)
         });
         if (res.status === 201){
+            console.log(res);
+            getLastWork();
+            alert("Formulaire envoyé");
             closeModal2();
+        } else if (res.status === 401){
+            alert("Votre session a expiré");
+        } else if (res.status === 500){
+            alert("Une erreur inattendue est survenue. Veuillez réessayer plus tard.");
         }
     } catch (err){
         console.log(err);
     }
 }
 
+//Fonction pour les actions après la soumission du formulaire
 const sendAddForm = function(e){
     console.log('sending works');
     e.preventDefault();
     sendPostResquest();
 }
 
-
 //Fonction pour créer une modale pour ajouter un projet
 function createAddModal(){
-    let addModal = document.querySelector('#portfolio').appendChild(document.createElement('aside'));
+    let addModal = document.querySelector('main').appendChild(document.createElement('aside'));
     addModal.setAttribute('id', 'modal-add');
     modalAttributes(addModal);
     createModalWrapper(addModal);
     let modalAddTop = addModal.querySelector('.modal-wrapper').insertBefore(document.createElement('div'), addModal.querySelector('section'));
-    let returnArrow = modalAddTop.appendChild(document.createElement('a'));
+    returnArrow = modalAddTop.appendChild(document.createElement('a'));
     modalAddTop.appendChild(closeButton);
     returnArrow.innerHTML = arrowLeft;
     returnArrow.setAttribute('href', '#modal-gallery');
@@ -303,11 +342,12 @@ function createAddModal(){
     setMultipleAttr(selectCategory, selectCategoryAttr);
     let option = selectCategory.appendChild(document.createElement('option'));
     option.setAttribute('selected', '');
+    invalidMessage = addForm.appendChild(document.createElement('p'));
+    invalidMessage.classList.add('invalid-message');
     let lineBreak = addForm.appendChild(document.createElement('div'));
     lineBreak.classList.add('line-break');
     validate = addForm.appendChild(document.createElement('input'));
     setMultipleAttr(validate, validateAttr);
-    console.log(validate);
 }
 
 //Fonction pour créer le contenu de la modale Galerie Photo
@@ -360,10 +400,12 @@ const closeModal2 = function (e){
     if (modal2.id === 'modal-delete'){
         deleteButton.removeEventListener('click', deleteWork);
     } else if (modal2.id === 'modal-add'){
+        returnArrow.removeEventListener('click', openModal);
         addForm.removeEventListener('input', enableSubmit);
         validate.removeEventListener('submit', sendAddForm);
         inputPhoto.removeEventListener('change', loadPreview);
         revokePreview();
+        addForm.reset();
     }
     modal2 = null;
 }
@@ -385,7 +427,7 @@ const openModal2 = function (e){
         deleteButton.addEventListener('click', deleteWork);
     } else if (modal2.id === 'modal-add'){
         closeModal(e);
-        console.log('modal-gallery fermée');
+        returnArrow.addEventListener('click', openModal);
         inputPhoto.addEventListener('change', loadPreview);
         addForm.addEventListener('input', enableSubmit);
         addForm.addEventListener('submit', sendAddForm);
@@ -403,7 +445,6 @@ const closeModal = function (e){
     modal.querySelector('.js-modal-close').removeEventListener('click', closeModal);
     modal.querySelector('.stop-prop').removeEventListener('click', stopPropagation);
     if (modal.id === 'modal-gallery'){
-        console.log('3');
         modal.querySelectorAll('.js-modal2').forEach(a => {
             a.removeEventListener('click', openModal2);
         })
@@ -423,10 +464,12 @@ const openModal = function (e){
     modal.querySelector('.js-modal-close').addEventListener('click', closeModal);
     modal.querySelector('.stop-prop').addEventListener('click', stopPropagation);
     if (modal.id === 'modal-gallery'){
-        console.log('modal-gallery ouverte');
         modal.querySelectorAll('.js-modal2').forEach(a => {
             a.addEventListener('click', openModal2);
         })
+    }
+    if (e.target === returnArrow){
+        closeModal2(e);
     }
 }
 
@@ -457,31 +500,13 @@ function edition(){
     button.innerText = "publier les changements";
 }
 
-//Fonction pour créer outils d'édition si admin est connectée
-function adminMode(){
-    document.querySelector('a').innerText = "logout";
-    edition();
-    galleryModal();
-    modalEventListener();
-}
-
-//Fonction pour déclencher l'authentification et la récupération de projets au chargement de la page
-function Onload(){
-    checkAuth();
-    getWork();
-    if (token != null){
-        adminMode();
-    }
-}
-
-Onload();
-
 //Fonction pour ajouter les catégories au Set et créer des filtres pour chacune.
 function createCategory(element){
     if (!categorySet.has(element)){
         categorySet.add(element);
         let newFilter = document.createElement("button");
         selector.appendChild(newFilter);
+        newFilter.dataset.category = element.id;
         newFilter.innerText = element.name;
         newFilter.classList.add('filter');
     }
@@ -503,8 +528,6 @@ async function getCategories(){
     }
 }
 
-getCategories();
-
 //Fonction pour montrer tous les projets quand le filtre "Tous" est activé
 function showAll(){
     defaultFilter.classList.add('filter-selected');
@@ -521,16 +544,16 @@ function filterSelected(e){
         e.target.classList.toggle('filter-selected');
         [...figures].forEach(element => {element.style.display = 'none'});
         [...figures].forEach(element => {
-            if (e.target.classList.contains('filter-selected') && element.dataset.category === e.target.innerText){
+            if (e.target.classList.contains('filter-selected') && element.dataset.category === e.target.dataset.category){
                 element.style.display = 'initial';
             }
         })
     } else {
         e.target.classList.toggle('filter-selected');
         [...figures].forEach(element => {
-            if (e.target.classList.contains('filter-selected') && element.dataset.category === e.target.innerText){
+            if (e.target.classList.contains('filter-selected') && element.dataset.category === e.target.dataset.category){
                 element.style.display = 'initial';
-            } else if (!e.target.classList.contains('filter-selected') && element.dataset.category === e.target.innerText){
+            } else if (!e.target.classList.contains('filter-selected') && element.dataset.category === e.target.dataset.category){
                 element.style.display = 'none';
             }
         })
@@ -548,3 +571,34 @@ buttons.forEach(item => {
         }
     })
 })
+
+//Fonction pour déconnecter l'admin
+function logOut(){
+    let logout = document.querySelector('a');
+    logout.innerText = "logout";
+    logout.addEventListener('click', function(e){
+        e.preventDefault();
+        localStorage.clear();
+        window.location.reload();
+    })
+}
+
+//Fonction pour créer outils d'édition si admin est connectée
+function adminMode(){
+    logOut();
+    edition();
+    galleryModal();
+    modalEventListener();
+}
+
+//Fonction pour déclencher l'authentification et la récupération de projets au chargement de la page
+function Onload(){
+    checkAuth();
+    getWork();
+    getCategories();
+    if (token != null){
+        adminMode();
+    }
+}
+
+Onload();

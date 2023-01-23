@@ -234,7 +234,7 @@ a svg {
 	left: 700px;
 }
 
-#portfolio .line-break{
+.line-break{
 	width: 100%;
 	height: 1px;
 	background-color: #B3B3B3;
@@ -287,12 +287,12 @@ a svg {
 	align-items: center;
 }
 
-#portfolio #modal-gallery p{
+#modal-gallery p{
 	color: #D65353;
 	font-family: 'Work sans';
 }
 
-#porfolio #modal-delete {
+#modal-delete {
 	z-index: 10;
 }
 
@@ -306,6 +306,10 @@ a svg {
 	height: 100%;
 	margin: 20px 20px;
 	justify-content: space-between;
+}
+
+#modal-delete p {
+	color: black;
 }
 
 #modal-delete #button-delete {
@@ -377,8 +381,18 @@ a svg {
 	font-family: 'Work sans';
 }
 
+#add-form input[type="text"]:invalid{
+	border-color: #D65353;
+}
+
 #add-form option{
 	font-family: 'Work sans';
+}
+
+.invalid-message {
+	color: #D65353;
+	font-size: 12px;
+	align-self: center;
 }
 
 #valid{
