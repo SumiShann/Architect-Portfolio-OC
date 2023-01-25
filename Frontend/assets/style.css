@@ -395,7 +395,7 @@ a svg {
 	align-self: center;
 }
 
-#valid{
+#validate{
 	width: 60%;
 	height: 36px;
 	font-size: 14px;
@@ -405,7 +405,7 @@ a svg {
 	border: none;
 }
 
-#valid:disabled{
+#validate:disabled{
 	background-color: #A7A7A7;
 }
 

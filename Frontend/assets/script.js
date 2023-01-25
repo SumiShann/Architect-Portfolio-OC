@@ -6,7 +6,7 @@ let image;
 let caption;
 let works;
 let figures = [];
-let categorySet = new Set();
+const categorySet = new Set();
 let categories;
 
 const selector = portfolio.insertBefore(document.createElement('div'), gallery);
@@ -16,7 +16,7 @@ const defaultFilter = selector.appendChild(document.createElement('button'));
 defaultFilter.innerText = "Tous";
 defaultFilter.classList.add('filter-selected');
 const buttons = document.querySelectorAll("#portfolio .selector");
-let filters = document.getElementsByClassName('filter');
+const filters = document.getElementsByClassName('filter');
 
 //Variable pour stocker le code HTML nécessaire pour créer un lien "modifier" menant à une modale
 const modify = '<a class="js-modal modify"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M373.1 24.97C401.2-3.147 446.8-3.147 474.9 24.97L487 37.09C515.1 65.21 515.1 110.8 487 138.9L289.8 336.2C281.1 344.8 270.4 351.1 258.6 354.5L158.6 383.1C150.2 385.5 141.2 383.1 135 376.1C128.9 370.8 126.5 361.8 128.9 353.4L157.5 253.4C160.9 241.6 167.2 230.9 175.8 222.2L373.1 24.97zM440.1 58.91C431.6 49.54 416.4 49.54 407 58.91L377.9 88L424 134.1L453.1 104.1C462.5 95.6 462.5 80.4 453.1 71.03L440.1 58.91zM203.7 266.6L186.9 325.1L245.4 308.3C249.4 307.2 252.9 305.1 255.8 302.2L390.1 168L344 121.9L209.8 256.2C206.9 259.1 204.8 262.6 203.7 266.6zM200 64C213.3 64 224 74.75 224 88C224 101.3 213.3 112 200 112H88C65.91 112 48 129.9 48 152V424C48 446.1 65.91 464 88 464H360C382.1 464 400 446.1 400 424V312C400 298.7 410.7 288 424 288C437.3 288 448 298.7 448 312V424C448 472.6 408.6 512 360 512H88C39.4 512 0 472.6 0 424V152C0 103.4 39.4 64 88 64H200z" fill="black"/></svg> modifier</a>';
@@ -31,7 +31,6 @@ let modalWrap;
 let modal;
 let modal2;
 let closeButton;
-let h3;
 
 //Variables des liens ouvrant d'autres modales dans modalGallery
 let addPhoto;
@@ -50,45 +49,6 @@ let inputTitle;
 let selectCategory;
 let invalidMessage;
 let validate;
-
-//Variable avec les attributs du formulaire addForm
-const addFormAttr = {
-    enctype: 'multipart/form-data',
-    name: 'add-form',
-    id: 'add-form'
-};
-
-//Variable avec les attributs de inputPhoto
-const inputPhotoAttr = {
-    type: 'file',
-    name: 'image',
-    id: 'image',
-    accept: '.jpg, .png',
-    required: ''
-};
-
-//Variable avec les attributs de inputTitle
-const inputTitleAttr = {
-    type: 'text',
-    name: 'title',
-    id: 'title',
-    required: ''
-};
-
-//Variable avec les attributs de selectCategory
-const selectCategoryAttr = {
-    name: 'category',
-    id: 'category',
-    required: ''
-};
-
-//Variable avec les attributs du bouton validate
-const validateAttr = {
-    type: 'submit',
-    value: 'Valider',
-    id: 'valid',
-    disabled: 'true'
-};
 
 //Variable pour stocker le token d'authentification
 let token;
@@ -122,7 +82,7 @@ function createWorkElt(element){
 //Fonction pour créer les photos apparaissant dans la modale d'édition de la galerie
 function createModalPhoto(element){
     createFigure();
-    document.querySelector('#portfolio .modal-wrapper div').appendChild(work);
+    document.querySelector('#portfolio .modal-wrapper #edit-gallery').appendChild(work);
     caption.innerText = 'éditer';
     work.dataset.id = element.id;
     image.setAttribute('src', element.imageUrl);
@@ -165,8 +125,7 @@ function createModalWrapper(modalName){
     modalWrap.classList.add('modal-wrapper');
     modalWrap.classList.add('stop-prop');
     closeButton = modalWrap.appendChild(document.createElement('button'));
-    let section = modalWrap.appendChild(document.createElement('section'));
-    h3 = section.appendChild(document.createElement('h3'));
+    modalWrap.appendChild(document.createElement('section'));
     closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" fill="black"/></svg>';
     closeButton.classList.add('js-modal-close');
 }
@@ -177,7 +136,8 @@ function createDeleteModal(){
     modalDelete.setAttribute('id', 'modal-delete');
     modalAttributes(modalDelete);
     createModalWrapper(modalDelete);
-    h3.outerHTML = "<p>Êtes-vous sûre de vouloir supprimer ce projet de votre galerie ? Cette action ne sera pas réversible.</p>";
+    const p = document.querySelector('#modal-delete section').appendChild(document.createElement('p'));
+    p.innerHTML = "Êtes-vous sûre de vouloir supprimer ce projet de votre galerie ? Cette action ne sera pas réversible.";
     deleteButton = document.querySelector('#modal-delete section').appendChild(document.createElement('button'));
     deleteButton.setAttribute('id', 'button-delete');
     deleteButton.innerText = "Je suis sûre";
@@ -205,15 +165,9 @@ async function deleteWork(e){
     }
 }
 
-//Fonction pour appliquer plusieurs attributs à un seul élément d'un coup
-function setMultipleAttr(elt, eltAttr){
-    Object.keys(eltAttr).forEach(attribute => {
-        elt.setAttribute(attribute, eltAttr[attribute]);
-    })
-}
-
 //Fonction pour loader preview du projet
 const loadPreview = function (e){
+    projPrev = document.querySelector('#add-form img');
     if (e.target.files[0].size > 4 * 1048576){
         e.target.setCustomValidity("Le fichier ne doit pas faire plus de 4 mo");
         alert("Le fichier ne doit pas faire plus de 4 mo.");
@@ -236,6 +190,15 @@ function createOption(element){
     selectCategory.add(option);
     option.setAttribute('value', element.id);
     option.innerText = element.name;
+}
+
+//Fonction pour invalider les titres commençant par un espace
+function trimText(){
+    if(/^\s/.test(inputTitle.value)){
+        inputTitle.value = '';
+    } else {
+        inputTitle.value.trim();
+    }
 }
 
 //Fonction pour vérifier la validité des champs du formulaire
@@ -314,46 +277,20 @@ function createAddModal(){
     returnArrow.innerHTML = arrowLeft;
     returnArrow.setAttribute('href', '#modal-gallery');
     returnArrow.setAttribute('id', 'return-arrow');
-    h3.innerText = "Ajout photo";
-    let form = addModal.querySelector('section').appendChild(document.createElement('form'));
-    setMultipleAttr(form, addFormAttr);
+    addModal.querySelector('section').innerHTML = '<h3>Ajout photo</h3><form enctype="multipart/form-data" name="add-form" id="add-form"><div class="container-photo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M152 120c-26.51 0-48 21.49-48 48s21.49 48 48 48s48-21.49 48-48S178.5 120 152 120zM447.1 32h-384C28.65 32-.0091 60.65-.0091 96v320c0 35.35 28.65 64 63.1 64h384c35.35 0 64-28.65 64-64V96C511.1 60.65 483.3 32 447.1 32zM463.1 409.3l-136.8-185.9C323.8 218.8 318.1 216 312 216c-6.113 0-11.82 2.768-15.21 7.379l-106.6 144.1l-37.09-46.1c-3.441-4.279-8.934-6.809-14.77-6.809c-5.842 0-11.33 2.529-14.78 6.809l-75.52 93.81c0-.0293 0 .0293 0 0L47.99 96c0-8.822 7.178-16 16-16h384c8.822 0 16 7.178 16 16V409.3z" fill="#B9C5CC"/></svg><img id="proj-prev"/><input type="file" name="image" id="image" accept=".jpg, .png" required><label for="image">+ Ajouter photo</label><p>jpg, png : 4mo max</p></div><label for="title">Titre</label><input type="text" name="title" id="title" required><label for="category">Catégorie</label><select name="category" id="category" required><option selected></option></select><p class="invalid-message"></p><div class="line-break"></div><input type="submit" value="Valider" id="validate" disabled="true"></form>'
     addForm = document.forms.namedItem('add-form');
-    let containerPhoto = addForm.appendChild(document.createElement('div'));
-    containerPhoto.classList.add('container-photo');
-    containerPhoto.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M152 120c-26.51 0-48 21.49-48 48s21.49 48 48 48s48-21.49 48-48S178.5 120 152 120zM447.1 32h-384C28.65 32-.0091 60.65-.0091 96v320c0 35.35 28.65 64 63.1 64h384c35.35 0 64-28.65 64-64V96C511.1 60.65 483.3 32 447.1 32zM463.1 409.3l-136.8-185.9C323.8 218.8 318.1 216 312 216c-6.113 0-11.82 2.768-15.21 7.379l-106.6 144.1l-37.09-46.1c-3.441-4.279-8.934-6.809-14.77-6.809c-5.842 0-11.33 2.529-14.78 6.809l-75.52 93.81c0-.0293 0 .0293 0 0L47.99 96c0-8.822 7.178-16 16-16h384c8.822 0 16 7.178 16 16V409.3z" fill="#B9C5CC"/></svg>'
-    projPrev = containerPhoto.appendChild(document.createElement('img'));
-    projPrev.setAttribute('id', 'proj-prev');
-    inputPhoto = containerPhoto.appendChild(document.createElement('input'));
-    setMultipleAttr(inputPhoto, inputPhotoAttr);
-    let labelPhoto = containerPhoto.appendChild(document.createElement('label'));
-    labelPhoto.setAttribute('for', 'image');
-    labelPhoto.innerText = "+ Ajouter photo";
-    let photoDesc = containerPhoto.appendChild(document.createElement('p'));
-    photoDesc.innerText = "jpg, png : 4mo max";
-    let labelTitle = addForm.appendChild(document.createElement('label'));
-    labelTitle.setAttribute('for', 'title');
-    labelTitle.innerText = "Titre";
-    inputTitle = addForm.appendChild(document.createElement('input'));
-    setMultipleAttr(inputTitle, inputTitleAttr);
-    let labelCategory = addForm.appendChild(document.createElement('label'));
-    labelCategory.setAttribute('for', 'category');
-    labelCategory.innerText = "Catégorie";
-    selectCategory = addForm.appendChild(document.createElement('select'));
-    setMultipleAttr(selectCategory, selectCategoryAttr);
-    let option = selectCategory.appendChild(document.createElement('option'));
-    option.setAttribute('selected', '');
-    invalidMessage = addForm.appendChild(document.createElement('p'));
-    invalidMessage.classList.add('invalid-message');
-    let lineBreak = addForm.appendChild(document.createElement('div'));
-    lineBreak.classList.add('line-break');
-    validate = addForm.appendChild(document.createElement('input'));
-    setMultipleAttr(validate, validateAttr);
+    inputPhoto = document.querySelector('#modal-add input[type="file"]');
+    inputTitle = document.querySelector('#modal-add input[type="text"]');
+    selectCategory = document.querySelector('#modal-add select');
+    invalidMessage = document.querySelector('#modal-add .invalid-message');
+    validate = document.querySelector('#modal-add input[type="submit"]');
 }
 
 //Fonction pour créer le contenu de la modale Galerie Photo
 function galleryModalContent(){
+    let h3 = document.querySelector('#modal-gallery section').appendChild(document.createElement('h3'));
     h3.innerText = "Galerie photo";
-    const div = h3.insertAdjacentElement('afterend', document.createElement('div'));
+    let div = h3.insertAdjacentElement('afterend', document.createElement('div'));
     div.setAttribute('id', 'edit-gallery');
     let gallerySection = document.querySelector('#portfolio .modal-wrapper section');
     let lineBreak = gallerySection.appendChild(document.createElement('div'));
@@ -404,6 +341,7 @@ const closeModal2 = function (e){
         addForm.removeEventListener('input', enableSubmit);
         validate.removeEventListener('submit', sendAddForm);
         inputPhoto.removeEventListener('change', loadPreview);
+        inputTitle.removeEventListener('input', trimText);
         revokePreview();
         addForm.reset();
     }
@@ -429,6 +367,7 @@ const openModal2 = function (e){
         closeModal(e);
         returnArrow.addEventListener('click', openModal);
         inputPhoto.addEventListener('change', loadPreview);
+        inputTitle.addEventListener('input', trimText);
         addForm.addEventListener('input', enableSubmit);
         addForm.addEventListener('submit', sendAddForm);
     }
@@ -560,15 +499,18 @@ function filterSelected(e){
     }
 }
 
+function backToDefaultFilter(){
+    if (!buttons[0].classList.contains('filter-selected') && !buttons[1].classList.contains('filter-selected') && !buttons[2].classList.contains('filter-selected') && !buttons[3].classList.contains('filter-selected')){
+        showAll();
+    }
+}
+
 //EventListener pour écouter le clic de la souris sur les filtres
 buttons.forEach(item => {
     item.addEventListener('click', function(e){
         e.stopPropagation();
-        console.log(e.target);
         filterSelected(e);
-        if ([...buttons].forEach(element => {!element.classList.contains('filter-selected')})){//Si aucun filtre est actif, rendre "Tous" actif (ne marche pas)
-            showAll();
-        }
+        backToDefaultFilter();
     })
 })
 
