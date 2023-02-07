@@ -26,7 +26,6 @@ async function getUserData(){
             error.textContent = "";
             userData = await res.json();
             token = userData["token"];
-            console.log(token);
             localStorage.setItem('token', token);
             loggingIn();
         }

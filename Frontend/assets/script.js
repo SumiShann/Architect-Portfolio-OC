@@ -207,11 +207,9 @@ function trimText(){
 //Fonction pour vérifier la validité des champs du formulaire
 function enableSubmit(){
     if (inputPhoto.checkValidity() && inputTitle.checkValidity() && selectCategory.checkValidity()){
-        console.log('enabling works');
         validate.removeAttribute('disabled');
         invalidMessage.innerText = "";
     } else {
-        console.log('doesnt work');
         if (!validate.hasAttribute('disabled')){
             validate.setAttribute('disabled', 'true');
             invalidMessage.innerText = "Veuillez remplir tous les champs du formulaire";
@@ -247,7 +245,6 @@ async function sendPostResquest(){
             body: new FormData(addForm)
         });
         if (res.status === 201){
-            console.log(res);
             getLastWork();
             alert("Formulaire envoyé");
             closeModal2();
@@ -263,7 +260,6 @@ async function sendPostResquest(){
 
 //Fonction pour les actions après la soumission du formulaire
 const sendAddForm = function(e){
-    console.log('sending works');
     e.preventDefault();
     sendPostResquest();
 }
@@ -342,7 +338,7 @@ const closeModal2 = function (e){
     } else if (modal2.id === 'modal-add'){
         returnArrow.removeEventListener('click', openModal);
         addForm.removeEventListener('input', enableSubmit);
-        validate.removeEventListener('submit', sendAddForm);
+        addForm.removeEventListener('submit', sendAddForm);
         inputPhoto.removeEventListener('change', loadPreview);
         inputTitle.removeEventListener('input', trimText);
         revokePreview();
@@ -364,7 +360,6 @@ const openModal2 = function (e){
     modal2.querySelector('.stop-prop').addEventListener('click', stopPropagation);
     if (modal2.id === 'modal-delete'){
         workID = e.target.dataset.id;
-        console.log(workID);
         deleteButton.addEventListener('click', deleteWork);
     } else if (modal2.id === 'modal-add'){
         closeModal(e);
@@ -476,6 +471,7 @@ function showAll(){
     [...figures].forEach(element => {element.style.display = 'initial'});
 }
 
+//Fonction pour parer au cas où aucun filtre n'est sélectionné
 function preventFilterBugs(e){
     if (e.target.dataset.category === "1"){
         if (e.target.classList.contains('filter-selected')){
@@ -503,9 +499,6 @@ function preventFilterBugs(e){
     if (!filterOne && !filterTwo && !filterThree){
         showAll();
     }
-    console.log(filterOne);
-    console.log(filterTwo);
-    console.log(filterThree);
 }
 
 //Fonction pour changer le style des filtres et montrer les projets correspondants selon le filtre activé
