@@ -20,7 +20,7 @@ async function getUserData(){
             },
             body: JSON.stringify(user)
         })
-        if (res.status === 401){
+        if (res.status === 401 || res.status === 404){
             error.textContent = "Identifiants invalides";
         } else if (res.ok){
             error.textContent = "";
