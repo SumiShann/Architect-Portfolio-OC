@@ -157,7 +157,6 @@ async function deleteWork(e){
             },
         })
         if (res.ok){
-            console.log(res);
             document.querySelectorAll('figure[data-id="'+ workID +'"]').forEach(element => element.remove());
             closeModal2(e);
         } else if (res.status === 401){
@@ -223,7 +222,6 @@ async function getLastWork(){
         const response = await fetch("http://localhost:5678/api/works/");
         if (response.ok){
             works = await response.json();
-            console.log(works[works.length - 1]);
             createWorkElt(works[works.length - 1]);
             figures = document.querySelectorAll('#portfolio figure');
             createModalPhoto(works[works.length - 1]);
